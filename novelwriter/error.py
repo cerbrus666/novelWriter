@@ -33,7 +33,6 @@ from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import (
     QWidget,
-    qApp,
     QDialog,
     QGridLayout,
     QStyle,
@@ -197,14 +196,14 @@ def exceptionHandler(
 ) -> None:
     """Function to catch unhandled global exceptions."""
     from traceback import print_tb
-    from PySide6.QtWidgets import qApp
+    from PySide6.QtWidgets import QApplication
 
     logger.critical("%s: %s", exType.__name__, str(exValue))
     print_tb(exTrace)
 
     try:
         nwGUI = None
-        for qWin in qApp.topLevelWidgets():
+        for qWin in QApplication.topLevelWidgets():
             if qWin.objectName() == "GuiMain":
                 nwGUI = qWin
                 break
@@ -227,7 +226,7 @@ def exceptionHandler(
             logger.critical("Could not close the project before exiting")
             logger.critical(formatException(exc))
 
-        qApp.exit(1)
+        QApplication.exit(1)
 
     except Exception as exc:
         logger.critical(formatException(exc))

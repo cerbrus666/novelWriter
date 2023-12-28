@@ -31,12 +31,19 @@ import logging
 from time import time
 from pathlib import Path
 
-from PyQt5.QtGui import QFontDatabase
-from PyQt5.QtCore import (
-    PYQT_VERSION, PYQT_VERSION_STR, QT_VERSION, QT_VERSION_STR, QLibraryInfo,
-    QLocale, QStandardPaths, QSysInfo, QTranslator
+from PySide6.QtGui import QFontDatabase
+from PySide6.QtCore import (
+    PYQT_VERSION,
+    PYQT_VERSION_STR,
+    QT_VERSION,
+    QT_VERSION_STR,
+    QLibraryInfo,
+    QLocale,
+    QStandardPaths,
+    QSysInfo,
+    QTranslator,
 )
-from PyQt5.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication
 
 from novelwriter.error import formatException, logException
 from novelwriter.common import NWConfigParser, checkInt, checkPath, formatTimeStamp
@@ -46,24 +53,24 @@ logger = logging.getLogger(__name__)
 
 
 class Config:
-
-    LANG_NW   = 1
+    LANG_NW = 1
     LANG_PROJ = 2
 
     def __init__(self) -> None:
-
         # Initialisation
         # ==============
 
         # Set Application Variables
-        self.appName   = "novelWriter"
+        self.appName = "novelWriter"
         self.appHandle = "novelwriter"
 
         # Set Paths
         confRoot = Path(QStandardPaths.writableLocation(QStandardPaths.ConfigLocation))
         dataRoot = Path(QStandardPaths.writableLocation(QStandardPaths.AppDataLocation))
 
-        self._confPath = confRoot.absolute() / self.appHandle  # The user config location
+        self._confPath = (
+            confRoot.absolute() / self.appHandle
+        )  # The user config location
         self._dataPath = dataRoot.absolute() / self.appHandle  # The user data location
         self._homePath = Path.home().absolute()  # The user's home directory
         self._backPath = self._homePath / "Backups"
@@ -77,7 +84,7 @@ class Config:
 
         # Runtime Settings and Variables
         self._hasError = False  # True if the config class encountered an error
-        self._errData  = []     # List of error messages
+        self._errData = []  # List of error messages
 
         # Localisation
         # Note that these paths must be strings
@@ -98,98 +105,104 @@ class Config:
         self._recentObj = RecentProjects(self)
 
         # General GUI Settings
-        self.guiLocale   = self._qLocale.name()
-        self.guiTheme    = "default"        # GUI theme
-        self.guiSyntax   = "default_light"  # Syntax theme
-        self.guiFont     = ""               # Defaults to system default font in theme class
-        self.guiFontSize = 11               # Is overridden if system default is loaded
-        self.guiScale    = 1.0              # Set automatically by Theme class
-        self.hideVScroll = False            # Hide vertical scroll bars on main widgets
-        self.hideHScroll = False            # Hide horizontal scroll bars on main widgets
-        self.lastNotes   = "0x0"            # The latest release notes that have been shown
+        self.guiLocale = self._qLocale.name()
+        self.guiTheme = "default"  # GUI theme
+        self.guiSyntax = "default_light"  # Syntax theme
+        self.guiFont = ""  # Defaults to system default font in theme class
+        self.guiFontSize = 11  # Is overridden if system default is loaded
+        self.guiScale = 1.0  # Set automatically by Theme class
+        self.hideVScroll = False  # Hide vertical scroll bars on main widgets
+        self.hideHScroll = False  # Hide horizontal scroll bars on main widgets
+        self.lastNotes = "0x0"  # The latest release notes that have been shown
 
         # Size Settings
-        self._mainWinSize  = [1200, 650]     # Last size of the main GUI window
-        self._prefsWinSize = [700, 615]      # Last size of the Preferences dialog
-        self._projLoadCols = [280, 60, 160]  # Last columns widths of the Project Load dialog
-        self._mainPanePos  = [300, 800]      # Last position of the main window splitter
-        self._viewPanePos  = [500, 150]      # Last position of the document viewer splitter
-        self._outlnPanePos = [500, 150]      # Last position of the outline panel splitter
+        self._mainWinSize = [1200, 650]  # Last size of the main GUI window
+        self._prefsWinSize = [700, 615]  # Last size of the Preferences dialog
+        self._projLoadCols = [
+            280,
+            60,
+            160,
+        ]  # Last columns widths of the Project Load dialog
+        self._mainPanePos = [300, 800]  # Last position of the main window splitter
+        self._viewPanePos = [500, 150]  # Last position of the document viewer splitter
+        self._outlnPanePos = [500, 150]  # Last position of the outline panel splitter
 
         # Project Settings
-        self.autoSaveProj    = 60     # Interval for auto-saving project, in seconds
-        self.autoSaveDoc     = 30     # Interval for auto-saving document, in seconds
-        self.emphLabels      = True   # Add emphasis to H1 and H2 item labels
-        self.backupOnClose   = False  # Flag for running automatic backups
-        self.askBeforeBackup = True   # Flag for asking before running automatic backup
+        self.autoSaveProj = 60  # Interval for auto-saving project, in seconds
+        self.autoSaveDoc = 30  # Interval for auto-saving document, in seconds
+        self.emphLabels = True  # Add emphasis to H1 and H2 item labels
+        self.backupOnClose = False  # Flag for running automatic backups
+        self.askBeforeBackup = True  # Flag for asking before running automatic backup
 
         # Text Editor Settings
-        self.textFont        = ""     # Editor font
-        self.textSize        = 12     # Editor font size
-        self.textWidth       = 700    # Editor text width
-        self.textMargin      = 40     # Editor/viewer text margin
-        self.tabWidth        = 40     # Editor tabulator width
+        self.textFont = ""  # Editor font
+        self.textSize = 12  # Editor font size
+        self.textWidth = 700  # Editor text width
+        self.textMargin = 40  # Editor/viewer text margin
+        self.tabWidth = 40  # Editor tabulator width
 
-        self.focusWidth      = 800    # Focus Mode text width
+        self.focusWidth = 800  # Focus Mode text width
         self.hideFocusFooter = False  # Hide document footer in Focus Mode
-        self.showFullPath    = True   # Show full document path in editor header
-        self.autoSelect      = True   # Auto-select word when applying format with no selection
+        self.showFullPath = True  # Show full document path in editor header
+        self.autoSelect = (
+            True  # Auto-select word when applying format with no selection
+        )
 
-        self.doJustify       = False  # Justify text
+        self.doJustify = False  # Justify text
         self.showTabsNSpaces = False  # Show tabs and spaces in editor
         self.showLineEndings = False  # Show line endings in editor
-        self.showMultiSpaces = True   # Highlight multiple spaces in the text
+        self.showMultiSpaces = True  # Highlight multiple spaces in the text
 
-        self.doReplace       = True   # Enable auto-replace as you type
-        self.doReplaceSQuote = True   # Smart single quotes
-        self.doReplaceDQuote = True   # Smart double quotes
-        self.doReplaceDash   = True   # Replace multiple hyphens with dashes
-        self.doReplaceDots   = True   # Replace three dots with ellipsis
+        self.doReplace = True  # Enable auto-replace as you type
+        self.doReplaceSQuote = True  # Smart single quotes
+        self.doReplaceDQuote = True  # Smart double quotes
+        self.doReplaceDash = True  # Replace multiple hyphens with dashes
+        self.doReplaceDots = True  # Replace three dots with ellipsis
 
-        self.autoScroll      = False  # Typewriter-like scrolling
-        self.autoScrollPos   = 30     # Start point for typewriter-like scrolling
-        self.scrollPastEnd   = True   # Scroll past end of document, and centre cursor
+        self.autoScroll = False  # Typewriter-like scrolling
+        self.autoScrollPos = 30  # Start point for typewriter-like scrolling
+        self.scrollPastEnd = True  # Scroll past end of document, and centre cursor
 
-        self.wordCountTimer  = 5.0    # Interval for word count update in seconds
-        self.incNotesWCount  = True   # The status bar word count includes notes
+        self.wordCountTimer = 5.0  # Interval for word count update in seconds
+        self.incNotesWCount = True  # The status bar word count includes notes
 
-        self.highlightQuotes = True   # Highlight text in quotes
+        self.highlightQuotes = True  # Highlight text in quotes
         self.allowOpenSQuote = False  # Allow open-ended single quotes
-        self.allowOpenDQuote = True   # Allow open-ended double quotes
-        self.highlightEmph   = True   # Add colour to text emphasis
+        self.allowOpenDQuote = True  # Allow open-ended double quotes
+        self.highlightEmph = True  # Add colour to text emphasis
 
-        self.stopWhenIdle    = True   # Stop the status bar clock when the user is idle
-        self.userIdleTime    = 300    # Time of inactivity to consider user idle
+        self.stopWhenIdle = True  # Stop the status bar clock when the user is idle
+        self.userIdleTime = 300  # Time of inactivity to consider user idle
 
         # User-Selected Symbol Settings
-        self.fmtApostrophe   = nwUnicode.U_RSQUO
-        self.fmtSQuoteOpen   = nwUnicode.U_LSQUO
-        self.fmtSQuoteClose  = nwUnicode.U_RSQUO
-        self.fmtDQuoteOpen   = nwUnicode.U_LDQUO
-        self.fmtDQuoteClose  = nwUnicode.U_RDQUO
-        self.fmtPadBefore    = ""
-        self.fmtPadAfter     = ""
-        self.fmtPadThin      = False
+        self.fmtApostrophe = nwUnicode.U_RSQUO
+        self.fmtSQuoteOpen = nwUnicode.U_LSQUO
+        self.fmtSQuoteClose = nwUnicode.U_RSQUO
+        self.fmtDQuoteOpen = nwUnicode.U_LDQUO
+        self.fmtDQuoteClose = nwUnicode.U_RDQUO
+        self.fmtPadBefore = ""
+        self.fmtPadAfter = ""
+        self.fmtPadThin = False
 
         # User Paths
-        self._lastPath   = self._homePath  # The user's last used path
+        self._lastPath = self._homePath  # The user's last used path
         self._backupPath = self._backPath  # Backup path to use, can be none
 
         # Spell Checking Settings
         self.spellLanguage = "en"
 
         # State
-        self.showViewerPanel = True   # The panel for the viewer is visible
+        self.showViewerPanel = True  # The panel for the viewer is visible
         self.showEditToolBar = False  # The document editor toolbar visibility
-        self.useShortcodes   = False  # Use shortcodes for basic formatting
-        self.viewComments    = True   # Comments are shown in the viewer
-        self.viewSynopsis    = True   # Synopsis is shown in the viewer
+        self.useShortcodes = False  # Use shortcodes for basic formatting
+        self.viewComments = True  # Comments are shown in the viewer
+        self.viewSynopsis = True  # Synopsis is shown in the viewer
 
         # Search Bar Switches
-        self.searchCase     = False
-        self.searchWord     = False
-        self.searchRegEx    = False
-        self.searchLoop     = False
+        self.searchCase = False
+        self.searchWord = False
+        self.searchRegEx = False
+        self.searchLoop = False
         self.searchNextFile = False
         self.searchMatchCap = False
 
@@ -197,19 +210,19 @@ class Config:
         # ==========================
 
         # Check Qt5 Versions
-        self.verQtString   = QT_VERSION_STR
-        self.verQtValue    = QT_VERSION
+        self.verQtString = QT_VERSION_STR
+        self.verQtValue = QT_VERSION
         self.verPyQtString = PYQT_VERSION_STR
-        self.verPyQtValue  = PYQT_VERSION
+        self.verPyQtValue = PYQT_VERSION
 
         # Check Python Version
         self.verPyString = sys.version.split()[0]
 
         # Check OS Type
-        self.osType    = sys.platform
-        self.osLinux   = False
+        self.osType = sys.platform
+        self.osLinux = False
         self.osWindows = False
-        self.osDarwin  = False
+        self.osDarwin = False
         self.osUnknown = False
         if self.osType.startswith("linux"):
             self.osLinux = True
@@ -223,10 +236,10 @@ class Config:
             self.osUnknown = True
 
         # Other System Info
-        self.hostName  = QSysInfo.machineHostName()
+        self.hostName = QSysInfo.machineHostName()
         self.kernelVer = QSysInfo.kernelVersion()
-        self.isDebug   = False  # True if running in debug mode
-        self.memInfo   = False  # True if displaying mem info in status bar
+        self.isDebug = False  # True if running in debug mode
+        self.memInfo = False  # True if displaying mem info in status bar
 
         # Packages
         self.hasEnchant = False  # The pyenchant package
@@ -247,27 +260,27 @@ class Config:
 
     @property
     def mainWinSize(self) -> list[int]:
-        return [int(x*self.guiScale) for x in self._mainWinSize]
+        return [int(x * self.guiScale) for x in self._mainWinSize]
 
     @property
     def preferencesWinSize(self) -> list[int]:
-        return [int(x*self.guiScale) for x in self._prefsWinSize]
+        return [int(x * self.guiScale) for x in self._prefsWinSize]
 
     @property
     def projLoadColWidths(self) -> list[int]:
-        return [int(x*self.guiScale) for x in self._projLoadCols]
+        return [int(x * self.guiScale) for x in self._projLoadCols]
 
     @property
     def mainPanePos(self) -> list[int]:
-        return [int(x*self.guiScale) for x in self._mainPanePos]
+        return [int(x * self.guiScale) for x in self._mainPanePos]
 
     @property
     def viewPanePos(self) -> list[int]:
-        return [int(x*self.guiScale) for x in self._viewPanePos]
+        return [int(x * self.guiScale) for x in self._viewPanePos]
 
     @property
     def outlinePanePos(self) -> list[int]:
-        return [int(x*self.guiScale) for x in self._outlnPanePos]
+        return [int(x * self.guiScale) for x in self._outlnPanePos]
 
     ##
     #  Getters
@@ -298,8 +311,8 @@ class Config:
         adjust it a bit, and we don't want the main window to shrink or
         grow each time the app is opened.
         """
-        width = int(width/self.guiScale)
-        height = int(height/self.guiScale)
+        width = int(width / self.guiScale)
+        height = int(height / self.guiScale)
         if abs(self._mainWinSize[0] - width) > 5:
             self._mainWinSize[0] = width
         if abs(self._mainWinSize[1] - height) > 5:
@@ -308,28 +321,28 @@ class Config:
 
     def setPreferencesWinSize(self, width: int, height: int) -> None:
         """Set the size of the Preferences dialog window."""
-        self._prefsWinSize[0] = int(width/self.guiScale)
-        self._prefsWinSize[1] = int(height/self.guiScale)
+        self._prefsWinSize[0] = int(width / self.guiScale)
+        self._prefsWinSize[1] = int(height / self.guiScale)
         return
 
     def setProjLoadColWidths(self, widths: list[int]) -> None:
         """Set the column widths of the Load Project dialog."""
-        self._projLoadCols = [int(x/self.guiScale) for x in widths]
+        self._projLoadCols = [int(x / self.guiScale) for x in widths]
         return
 
     def setMainPanePos(self, pos: list[int]) -> None:
         """Set the position of the main GUI splitter."""
-        self._mainPanePos = [int(x/self.guiScale) for x in pos]
+        self._mainPanePos = [int(x / self.guiScale) for x in pos]
         return
 
     def setViewPanePos(self, pos: list[int]) -> None:
         """Set the position of the viewer meta data splitter."""
-        self._viewPanePos = [int(x/self.guiScale) for x in pos]
+        self._viewPanePos = [int(x / self.guiScale) for x in pos]
         return
 
     def setOutlinePanePos(self, pos: list[int]) -> None:
         """Set the position of the outline details splitter."""
-        self._outlnPanePos = [int(x/self.guiScale) for x in pos]
+        self._outlnPanePos = [int(x / self.guiScale) for x in pos]
         return
 
     def setLastPath(self, path: str | Path) -> None:
@@ -375,11 +388,11 @@ class Config:
 
     def pxInt(self, value: int) -> int:
         """Scale fixed gui sizes by the screen scale factor."""
-        return int(value*self.guiScale)
+        return int(value * self.guiScale)
 
     def rpxInt(self, value: int) -> int:
         """Un-scale fixed gui sizes by the screen scale factor."""
-        return int(value/self.guiScale)
+        return int(value / self.guiScale)
 
     def dataPath(self, target: str | None = None) -> Path:
         """Return a path in the data folder."""
@@ -432,10 +445,12 @@ class Config:
 
         for qmFile in self._nwLangPath.iterdir():
             qmName = qmFile.name
-            if not (qmFile.is_file() and qmName.startswith(fPre) and qmName.endswith(fExt)):
+            if not (
+                qmFile.is_file() and qmName.startswith(fPre) and qmName.endswith(fExt)
+            ):
                 continue
 
-            qmLang = qmName[len(fPre):-len(fExt)]
+            qmLang = qmName[len(fPre) : -len(fExt)]
             qmName = QLocale(qmLang).nativeLanguageName().title()
             if qmLang and qmName and qmLang != "en_GB":
                 langList[qmLang] = qmName
@@ -446,8 +461,9 @@ class Config:
     #  Config Actions
     ##
 
-    def initConfig(self, confPath: str | Path | None = None,
-                   dataPath: str | Path | None = None) -> None:
+    def initConfig(
+        self, confPath: str | Path | None = None, dataPath: str | Path | None = None
+    ) -> None:
         """Initialise the config class. The manual setting of confPath
         and dataPath is mainly intended for the test suite.
         """
@@ -498,7 +514,7 @@ class Config:
         self._qtTrans = {}
 
         langList = [
-            (self._qtLangPath, "qtbase"),   # Qt 5.x
+            (self._qtLangPath, "qtbase"),  # Qt 5.x
             (str(self._nwLangPath), "nw"),  # novelWriter
         ]
         for lngPath, lngBase in langList:
@@ -532,87 +548,87 @@ class Config:
 
         # Main
         sec = "Main"
-        self.guiTheme    = conf.rdStr(sec, "theme", self.guiTheme)
-        self.guiSyntax   = conf.rdStr(sec, "syntax", self.guiSyntax)
-        self.guiFont     = conf.rdStr(sec, "font", self.guiFont)
+        self.guiTheme = conf.rdStr(sec, "theme", self.guiTheme)
+        self.guiSyntax = conf.rdStr(sec, "syntax", self.guiSyntax)
+        self.guiFont = conf.rdStr(sec, "font", self.guiFont)
         self.guiFontSize = conf.rdInt(sec, "fontsize", self.guiFontSize)
-        self.guiLocale   = conf.rdStr(sec, "localisation", self.guiLocale)
+        self.guiLocale = conf.rdStr(sec, "localisation", self.guiLocale)
         self.hideVScroll = conf.rdBool(sec, "hidevscroll", self.hideVScroll)
         self.hideHScroll = conf.rdBool(sec, "hidehscroll", self.hideHScroll)
-        self.lastNotes   = conf.rdStr(sec, "lastnotes", self.lastNotes)
-        self._lastPath   = conf.rdPath(sec, "lastpath", self._lastPath)
+        self.lastNotes = conf.rdStr(sec, "lastnotes", self.lastNotes)
+        self._lastPath = conf.rdPath(sec, "lastpath", self._lastPath)
 
         # Sizes
         sec = "Sizes"
-        self._mainWinSize  = conf.rdIntList(sec, "mainwindow", self._mainWinSize)
+        self._mainWinSize = conf.rdIntList(sec, "mainwindow", self._mainWinSize)
         self._prefsWinSize = conf.rdIntList(sec, "preferences", self._prefsWinSize)
         self._projLoadCols = conf.rdIntList(sec, "projloadcols", self._projLoadCols)
-        self._mainPanePos  = conf.rdIntList(sec, "mainpane", self._mainPanePos)
-        self._viewPanePos  = conf.rdIntList(sec, "viewpane", self._viewPanePos)
+        self._mainPanePos = conf.rdIntList(sec, "mainpane", self._mainPanePos)
+        self._viewPanePos = conf.rdIntList(sec, "viewpane", self._viewPanePos)
         self._outlnPanePos = conf.rdIntList(sec, "outlinepane", self._outlnPanePos)
 
         # Project
         sec = "Project"
-        self.autoSaveProj    = conf.rdInt(sec, "autosaveproject", self.autoSaveProj)
-        self.autoSaveDoc     = conf.rdInt(sec, "autosavedoc", self.autoSaveDoc)
-        self.emphLabels      = conf.rdBool(sec, "emphlabels", self.emphLabels)
-        self._backupPath     = conf.rdPath(sec, "backuppath", self._backupPath)
-        self.backupOnClose   = conf.rdBool(sec, "backuponclose", self.backupOnClose)
+        self.autoSaveProj = conf.rdInt(sec, "autosaveproject", self.autoSaveProj)
+        self.autoSaveDoc = conf.rdInt(sec, "autosavedoc", self.autoSaveDoc)
+        self.emphLabels = conf.rdBool(sec, "emphlabels", self.emphLabels)
+        self._backupPath = conf.rdPath(sec, "backuppath", self._backupPath)
+        self.backupOnClose = conf.rdBool(sec, "backuponclose", self.backupOnClose)
         self.askBeforeBackup = conf.rdBool(sec, "askbeforebackup", self.askBeforeBackup)
 
         # Editor
         sec = "Editor"
-        self.textFont        = conf.rdStr(sec, "textfont", self.textFont)
-        self.textSize        = conf.rdInt(sec, "textsize", self.textSize)
-        self.textWidth       = conf.rdInt(sec, "width", self.textWidth)
-        self.textMargin      = conf.rdInt(sec, "margin", self.textMargin)
-        self.tabWidth        = conf.rdInt(sec, "tabwidth", self.tabWidth)
-        self.focusWidth      = conf.rdInt(sec, "focuswidth", self.focusWidth)
+        self.textFont = conf.rdStr(sec, "textfont", self.textFont)
+        self.textSize = conf.rdInt(sec, "textsize", self.textSize)
+        self.textWidth = conf.rdInt(sec, "width", self.textWidth)
+        self.textMargin = conf.rdInt(sec, "margin", self.textMargin)
+        self.tabWidth = conf.rdInt(sec, "tabwidth", self.tabWidth)
+        self.focusWidth = conf.rdInt(sec, "focuswidth", self.focusWidth)
         self.hideFocusFooter = conf.rdBool(sec, "hidefocusfooter", self.hideFocusFooter)
-        self.doJustify       = conf.rdBool(sec, "justify", self.doJustify)
-        self.autoSelect      = conf.rdBool(sec, "autoselect", self.autoSelect)
-        self.doReplace       = conf.rdBool(sec, "autoreplace", self.doReplace)
+        self.doJustify = conf.rdBool(sec, "justify", self.doJustify)
+        self.autoSelect = conf.rdBool(sec, "autoselect", self.autoSelect)
+        self.doReplace = conf.rdBool(sec, "autoreplace", self.doReplace)
         self.doReplaceSQuote = conf.rdBool(sec, "repsquotes", self.doReplaceSQuote)
         self.doReplaceDQuote = conf.rdBool(sec, "repdquotes", self.doReplaceDQuote)
-        self.doReplaceDash   = conf.rdBool(sec, "repdash", self.doReplaceDash)
-        self.doReplaceDots   = conf.rdBool(sec, "repdots", self.doReplaceDots)
-        self.autoScroll      = conf.rdBool(sec, "autoscroll", self.autoScroll)
-        self.autoScrollPos   = conf.rdInt(sec, "autoscrollpos", self.autoScrollPos)
-        self.scrollPastEnd   = conf.rdBool(sec, "scrollpastend", self.scrollPastEnd)
-        self.fmtSQuoteOpen   = conf.rdStr(sec, "fmtsquoteopen", self.fmtSQuoteOpen)
-        self.fmtSQuoteClose  = conf.rdStr(sec, "fmtsquoteclose", self.fmtSQuoteClose)
-        self.fmtDQuoteOpen   = conf.rdStr(sec, "fmtdquoteopen", self.fmtDQuoteOpen)
-        self.fmtDQuoteClose  = conf.rdStr(sec, "fmtdquoteclose", self.fmtDQuoteClose)
-        self.fmtPadBefore    = conf.rdStr(sec, "fmtpadbefore", self.fmtPadBefore)
-        self.fmtPadAfter     = conf.rdStr(sec, "fmtpadafter", self.fmtPadAfter)
-        self.fmtPadThin      = conf.rdBool(sec, "fmtpadthin", self.fmtPadThin)
-        self.spellLanguage   = conf.rdStr(sec, "spellcheck", self.spellLanguage)
+        self.doReplaceDash = conf.rdBool(sec, "repdash", self.doReplaceDash)
+        self.doReplaceDots = conf.rdBool(sec, "repdots", self.doReplaceDots)
+        self.autoScroll = conf.rdBool(sec, "autoscroll", self.autoScroll)
+        self.autoScrollPos = conf.rdInt(sec, "autoscrollpos", self.autoScrollPos)
+        self.scrollPastEnd = conf.rdBool(sec, "scrollpastend", self.scrollPastEnd)
+        self.fmtSQuoteOpen = conf.rdStr(sec, "fmtsquoteopen", self.fmtSQuoteOpen)
+        self.fmtSQuoteClose = conf.rdStr(sec, "fmtsquoteclose", self.fmtSQuoteClose)
+        self.fmtDQuoteOpen = conf.rdStr(sec, "fmtdquoteopen", self.fmtDQuoteOpen)
+        self.fmtDQuoteClose = conf.rdStr(sec, "fmtdquoteclose", self.fmtDQuoteClose)
+        self.fmtPadBefore = conf.rdStr(sec, "fmtpadbefore", self.fmtPadBefore)
+        self.fmtPadAfter = conf.rdStr(sec, "fmtpadafter", self.fmtPadAfter)
+        self.fmtPadThin = conf.rdBool(sec, "fmtpadthin", self.fmtPadThin)
+        self.spellLanguage = conf.rdStr(sec, "spellcheck", self.spellLanguage)
         self.showTabsNSpaces = conf.rdBool(sec, "showtabsnspaces", self.showTabsNSpaces)
         self.showLineEndings = conf.rdBool(sec, "showlineendings", self.showLineEndings)
         self.showMultiSpaces = conf.rdBool(sec, "showmultispaces", self.showMultiSpaces)
-        self.wordCountTimer  = conf.rdFlt(sec, "wordcounttimer", self.wordCountTimer)
-        self.incNotesWCount  = conf.rdBool(sec, "incnoteswcount", self.incNotesWCount)
-        self.showFullPath    = conf.rdBool(sec, "showfullpath", self.showFullPath)
+        self.wordCountTimer = conf.rdFlt(sec, "wordcounttimer", self.wordCountTimer)
+        self.incNotesWCount = conf.rdBool(sec, "incnoteswcount", self.incNotesWCount)
+        self.showFullPath = conf.rdBool(sec, "showfullpath", self.showFullPath)
         self.highlightQuotes = conf.rdBool(sec, "highlightquotes", self.highlightQuotes)
         self.allowOpenSQuote = conf.rdBool(sec, "allowopensquote", self.allowOpenSQuote)
         self.allowOpenDQuote = conf.rdBool(sec, "allowopendquote", self.allowOpenDQuote)
-        self.highlightEmph   = conf.rdBool(sec, "highlightemph", self.highlightEmph)
-        self.stopWhenIdle    = conf.rdBool(sec, "stopwhenidle", self.stopWhenIdle)
-        self.userIdleTime    = conf.rdInt(sec, "useridletime", self.userIdleTime)
+        self.highlightEmph = conf.rdBool(sec, "highlightemph", self.highlightEmph)
+        self.stopWhenIdle = conf.rdBool(sec, "stopwhenidle", self.stopWhenIdle)
+        self.userIdleTime = conf.rdInt(sec, "useridletime", self.userIdleTime)
 
         # State
         sec = "State"
         self.showViewerPanel = conf.rdBool(sec, "showviewerpanel", self.showViewerPanel)
         self.showEditToolBar = conf.rdBool(sec, "showedittoolbar", self.showEditToolBar)
-        self.useShortcodes   = conf.rdBool(sec, "useshortcodes", self.useShortcodes)
-        self.viewComments    = conf.rdBool(sec, "viewcomments", self.viewComments)
-        self.viewSynopsis    = conf.rdBool(sec, "viewsynopsis", self.viewSynopsis)
-        self.searchCase      = conf.rdBool(sec, "searchcase", self.searchCase)
-        self.searchWord      = conf.rdBool(sec, "searchword", self.searchWord)
-        self.searchRegEx     = conf.rdBool(sec, "searchregex", self.searchRegEx)
-        self.searchLoop      = conf.rdBool(sec, "searchloop", self.searchLoop)
-        self.searchNextFile  = conf.rdBool(sec, "searchnextfile", self.searchNextFile)
-        self.searchMatchCap  = conf.rdBool(sec, "searchmatchcap", self.searchMatchCap)
+        self.useShortcodes = conf.rdBool(sec, "useshortcodes", self.useShortcodes)
+        self.viewComments = conf.rdBool(sec, "viewcomments", self.viewComments)
+        self.viewSynopsis = conf.rdBool(sec, "viewsynopsis", self.viewSynopsis)
+        self.searchCase = conf.rdBool(sec, "searchcase", self.searchCase)
+        self.searchWord = conf.rdBool(sec, "searchword", self.searchWord)
+        self.searchRegEx = conf.rdBool(sec, "searchregex", self.searchRegEx)
+        self.searchLoop = conf.rdBool(sec, "searchloop", self.searchLoop)
+        self.searchNextFile = conf.rdBool(sec, "searchnextfile", self.searchNextFile)
+        self.searchMatchCap = conf.rdBool(sec, "searchmatchcap", self.searchMatchCap)
 
         # Check Values
         # ============
@@ -635,91 +651,91 @@ class Config:
         conf = NWConfigParser()
 
         conf["Meta"] = {
-            "timestamp":    formatTimeStamp(time()),
+            "timestamp": formatTimeStamp(time()),
         }
 
         conf["Main"] = {
-            "theme":        str(self.guiTheme),
-            "syntax":       str(self.guiSyntax),
-            "font":         str(self.guiFont),
-            "fontsize":     str(self.guiFontSize),
+            "theme": str(self.guiTheme),
+            "syntax": str(self.guiSyntax),
+            "font": str(self.guiFont),
+            "fontsize": str(self.guiFontSize),
             "localisation": str(self.guiLocale),
-            "hidevscroll":  str(self.hideVScroll),
-            "hidehscroll":  str(self.hideHScroll),
-            "lastnotes":    str(self.lastNotes),
-            "lastpath":     str(self._lastPath),
+            "hidevscroll": str(self.hideVScroll),
+            "hidehscroll": str(self.hideHScroll),
+            "lastnotes": str(self.lastNotes),
+            "lastpath": str(self._lastPath),
         }
 
         conf["Sizes"] = {
-            "mainwindow":   self._packList(self._mainWinSize),
-            "preferences":  self._packList(self._prefsWinSize),
+            "mainwindow": self._packList(self._mainWinSize),
+            "preferences": self._packList(self._prefsWinSize),
             "projloadcols": self._packList(self._projLoadCols),
-            "mainpane":     self._packList(self._mainPanePos),
-            "viewpane":     self._packList(self._viewPanePos),
-            "outlinepane":  self._packList(self._outlnPanePos),
+            "mainpane": self._packList(self._mainPanePos),
+            "viewpane": self._packList(self._viewPanePos),
+            "outlinepane": self._packList(self._outlnPanePos),
         }
 
         conf["Project"] = {
             "autosaveproject": str(self.autoSaveProj),
-            "autosavedoc":     str(self.autoSaveDoc),
-            "emphlabels":      str(self.emphLabels),
-            "backuppath":      str(self._backupPath),
-            "backuponclose":   str(self.backupOnClose),
+            "autosavedoc": str(self.autoSaveDoc),
+            "emphlabels": str(self.emphLabels),
+            "backuppath": str(self._backupPath),
+            "backuponclose": str(self.backupOnClose),
             "askbeforebackup": str(self.askBeforeBackup),
         }
 
         conf["Editor"] = {
-            "textfont":        str(self.textFont),
-            "textsize":        str(self.textSize),
-            "width":           str(self.textWidth),
-            "margin":          str(self.textMargin),
-            "tabwidth":        str(self.tabWidth),
-            "focuswidth":      str(self.focusWidth),
+            "textfont": str(self.textFont),
+            "textsize": str(self.textSize),
+            "width": str(self.textWidth),
+            "margin": str(self.textMargin),
+            "tabwidth": str(self.tabWidth),
+            "focuswidth": str(self.focusWidth),
             "hidefocusfooter": str(self.hideFocusFooter),
-            "justify":         str(self.doJustify),
-            "autoselect":      str(self.autoSelect),
-            "autoreplace":     str(self.doReplace),
-            "repsquotes":      str(self.doReplaceSQuote),
-            "repdquotes":      str(self.doReplaceDQuote),
-            "repdash":         str(self.doReplaceDash),
-            "repdots":         str(self.doReplaceDots),
-            "autoscroll":      str(self.autoScroll),
-            "autoscrollpos":   str(self.autoScrollPos),
-            "scrollpastend":   str(self.scrollPastEnd),
-            "fmtsquoteopen":   str(self.fmtSQuoteOpen),
-            "fmtsquoteclose":  str(self.fmtSQuoteClose),
-            "fmtdquoteopen":   str(self.fmtDQuoteOpen),
-            "fmtdquoteclose":  str(self.fmtDQuoteClose),
-            "fmtpadbefore":    str(self.fmtPadBefore),
-            "fmtpadafter":     str(self.fmtPadAfter),
-            "fmtpadthin":      str(self.fmtPadThin),
-            "spellcheck":      str(self.spellLanguage),
+            "justify": str(self.doJustify),
+            "autoselect": str(self.autoSelect),
+            "autoreplace": str(self.doReplace),
+            "repsquotes": str(self.doReplaceSQuote),
+            "repdquotes": str(self.doReplaceDQuote),
+            "repdash": str(self.doReplaceDash),
+            "repdots": str(self.doReplaceDots),
+            "autoscroll": str(self.autoScroll),
+            "autoscrollpos": str(self.autoScrollPos),
+            "scrollpastend": str(self.scrollPastEnd),
+            "fmtsquoteopen": str(self.fmtSQuoteOpen),
+            "fmtsquoteclose": str(self.fmtSQuoteClose),
+            "fmtdquoteopen": str(self.fmtDQuoteOpen),
+            "fmtdquoteclose": str(self.fmtDQuoteClose),
+            "fmtpadbefore": str(self.fmtPadBefore),
+            "fmtpadafter": str(self.fmtPadAfter),
+            "fmtpadthin": str(self.fmtPadThin),
+            "spellcheck": str(self.spellLanguage),
             "showtabsnspaces": str(self.showTabsNSpaces),
             "showlineendings": str(self.showLineEndings),
             "showmultispaces": str(self.showMultiSpaces),
-            "wordcounttimer":  str(self.wordCountTimer),
-            "incnoteswcount":  str(self.incNotesWCount),
-            "showfullpath":    str(self.showFullPath),
+            "wordcounttimer": str(self.wordCountTimer),
+            "incnoteswcount": str(self.incNotesWCount),
+            "showfullpath": str(self.showFullPath),
             "highlightquotes": str(self.highlightQuotes),
             "allowopensquote": str(self.allowOpenSQuote),
             "allowopendquote": str(self.allowOpenDQuote),
-            "highlightemph":   str(self.highlightEmph),
-            "stopwhenidle":    str(self.stopWhenIdle),
-            "useridletime":    str(self.userIdleTime),
+            "highlightemph": str(self.highlightEmph),
+            "stopwhenidle": str(self.stopWhenIdle),
+            "useridletime": str(self.userIdleTime),
         }
 
         conf["State"] = {
             "showviewerpanel": str(self.showViewerPanel),
             "showedittoolbar": str(self.showEditToolBar),
-            "useshortcodes":   str(self.useShortcodes),
-            "viewcomments":    str(self.viewComments),
-            "viewsynopsis":    str(self.viewSynopsis),
-            "searchcase":      str(self.searchCase),
-            "searchword":      str(self.searchWord),
-            "searchregex":     str(self.searchRegEx),
-            "searchloop":      str(self.searchLoop),
-            "searchnextfile":  str(self.searchNextFile),
-            "searchmatchcap":  str(self.searchMatchCap),
+            "useshortcodes": str(self.useShortcodes),
+            "viewcomments": str(self.viewComments),
+            "viewsynopsis": str(self.viewSynopsis),
+            "searchcase": str(self.searchCase),
+            "searchword": str(self.searchWord),
+            "searchregex": str(self.searchRegEx),
+            "searchloop": str(self.searchLoop),
+            "searchnextfile": str(self.searchNextFile),
+            "searchmatchcap": str(self.searchMatchCap),
         }
 
         # Write config file
@@ -759,11 +775,11 @@ class Config:
             logger.debug("Checking package 'pyenchant': OK")
         return
 
+
 # END Class Config
 
 
 class RecentProjects:
-
     def __init__(self, config: Config) -> None:
         self._conf = config
         self._data = {}
@@ -815,7 +831,9 @@ class RecentProjects:
             for k, e in self._data.items()
         ]
 
-    def update(self, path: str | Path, title: str, words: int, saved: float | int) -> None:
+    def update(
+        self, path: str | Path, title: str, words: int, saved: float | int
+    ) -> None:
         """Add or update recent cache information on a given project."""
         self._data[str(path)] = {
             "title": title,
@@ -831,5 +849,6 @@ class RecentProjects:
             logger.debug("Removed recent: %s", path)
             self.saveCache()
         return
+
 
 # END Class RecentProjects
