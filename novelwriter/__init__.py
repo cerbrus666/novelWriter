@@ -27,7 +27,7 @@ import sys
 import getopt
 import logging
 
-from PyQt5.QtWidgets import QApplication, QErrorMessage
+from PySide6.QtWidgets import QApplication, QErrorMessage
 
 from novelwriter.error import exceptionHandler, logException
 from novelwriter.config import Config
@@ -36,17 +36,17 @@ from novelwriter.shared import SharedData
 # Package Meta
 # ============
 
-__package__    = "novelwriter"
-__copyright__  = "Copyright 2018–2023, Veronica Berglyd Olsen"
-__license__    = "GPLv3"
-__author__     = "Veronica Berglyd Olsen"
+__package__ = "novelwriter"
+__copyright__ = "Copyright 2018–2023, Veronica Berglyd Olsen"
+__license__ = "GPLv3"
+__author__ = "Veronica Berglyd Olsen"
 __maintainer__ = "Veronica Berglyd Olsen"
-__email__      = "code@vkbo.net"
-__version__    = "2.2"
+__email__ = "code@vkbo.net"
+__version__ = "2.2"
 __hexversion__ = "0x020200f0"
-__date__       = "2023-12-17"
-__status__     = "Stable"
-__domain__     = "novelwriter.io"
+__date__ = "2023-12-17"
+__status__ = "Stable"
+__domain__ = "novelwriter.io"
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +76,7 @@ def main(sysArgs: list | None = None):
         "config=",
         "data=",
         "testmode",
-        "meminfo"
+        "meminfo",
     ]
 
     helpMsg = (
@@ -131,7 +131,9 @@ def main(sysArgs: list | None = None):
         elif inOpt == "--debug":
             CONFIG.isDebug = True
             logLevel = logging.DEBUG
-            logFormat  = "[{asctime:}]  {filename:>17}:{lineno:<4d}  {levelname:8}  {message:}"
+            logFormat = (
+                "[{asctime:}]  {filename:>17}:{lineno:<4d}  {levelname:8}  {message:}"
+            )
         elif inOpt == "--style":
             qtStyle = inArg
         elif inOpt == "--config":
@@ -152,22 +154,24 @@ def main(sysArgs: list | None = None):
         cHandle.setFormatter(logging.Formatter(fmt=logFormat, style="{"))
         pkgLogger.addHandler(cHandle)
 
-    logger.info("Starting novelWriter %s (%s) %s", __version__, __hexversion__, __date__)
+    logger.info(
+        "Starting novelWriter %s (%s) %s", __version__, __hexversion__, __date__
+    )
 
     # Check Packages and Versions
     errorData = []
     errorCode = 0
-    if sys.hexversion < 0x030800f0:
+    if sys.hexversion < 0x030800F0:
         errorData.append(
             "At least Python 3.8 is required, found %s" % CONFIG.verPyString
         )
         errorCode |= 0x04
-    if CONFIG.verQtValue < 0x050a00:
+    if CONFIG.verQtValue < 0x050A00:
         errorData.append(
             "At least Qt5 version 5.10 is required, found %s" % CONFIG.verQtString
         )
         errorCode |= 0x08
-    if CONFIG.verPyQtValue < 0x050a00:
+    if CONFIG.verPyQtValue < 0x050A00:
         errorData.append(
             "At least PyQt5 version 5.10 is required, found %s" % CONFIG.verPyQtString
         )
@@ -177,14 +181,15 @@ def main(sysArgs: list | None = None):
         errApp = QApplication([])
         errDlg = QErrorMessage()
         errDlg.resize(500, 300)
-        errDlg.showMessage((
-            "<h3>A critical error was encountered</h3>"
-            "<p>novelWriter cannot start due to the following issues:<p>"
-            "<p>&nbsp;-&nbsp;%s</p>"
-            "<p>Shutting down ...</p>"
-        ) % (
-            "<br>&nbsp;-&nbsp;".join(errorData)
-        ))
+        errDlg.showMessage(
+            (
+                "<h3>A critical error was encountered</h3>"
+                "<p>novelWriter cannot start due to the following issues:<p>"
+                "<p>&nbsp;-&nbsp;%s</p>"
+                "<p>Shutting down ...</p>"
+            )
+            % ("<br>&nbsp;-&nbsp;".join(errorData))
+        )
         for errLine in errorData:
             logger.critical(errLine)
         errApp.exec_()
@@ -196,6 +201,7 @@ def main(sysArgs: list | None = None):
     if CONFIG.osDarwin:
         try:
             from Foundation import NSBundle
+
             bundle = NSBundle.mainBundle()
             info = bundle.localizedInfoDictionary() or bundle.infoDictionary()
             info["CFBundleName"] = "novelWriter"
@@ -206,6 +212,7 @@ def main(sysArgs: list | None = None):
     elif CONFIG.osWindows:
         try:
             import ctypes
+
             appID = f"io.novelwriter.{__version__}"
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appID)
         except Exception:
@@ -214,6 +221,7 @@ def main(sysArgs: list | None = None):
 
     # Import GUI (after dependency checks), and launch
     from novelwriter.guimain import GuiMain
+
     if testMode:
         nwGUI = GuiMain()
         return nwGUI
@@ -231,12 +239,15 @@ def main(sysArgs: list | None = None):
 
         # Run Config steps that require the QApplication
         CONFIG.initLocalisation(nwApp)
-        CONFIG.setTextFont(CONFIG.textFont, CONFIG.textSize)  # Makes sure these are valid
+        CONFIG.setTextFont(
+            CONFIG.textFont, CONFIG.textSize
+        )  # Makes sure these are valid
 
         # Launch main GUI
         nwGUI = GuiMain()
         nwGUI.postLaunchTasks(cmdOpen)
 
         sys.exit(nwApp.exec_())
+
 
 # END Function main
